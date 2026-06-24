@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scada-bg: #f1f5f9;
+    --scada-panel: #ffffff;
+    --scada-border: #cbd5e1;
+    --scada-text: #0f172a;
+    --scada-muted: #475569;
+    --steel-700: #cbd5e1;
+    --steel-800: #cbd5e1;
+    --steel-900: #f1f5f9;
+    --scada-panel-glass: rgba(255, 255, 255, 0.85);
+    --scada-border-glass: rgba(203, 213, 225, 0.70);
+  }
+
+  html.dark {
+    --scada-bg: #070b13;
+    --scada-panel: #101726;
+    --scada-border: #1e293b;
+    --scada-text: #f8fafc;
+    --scada-muted: #94a3b8;
+    --steel-700: #334155;
+    --steel-800: #1e293b;
+    --steel-900: #0f172a;
+    --scada-panel-glass: rgba(16, 23, 38, 0.85);
+    --scada-border-glass: rgba(30, 41, 59, 0.70);
+  }
+
+  body {
+    @apply bg-scada-bg text-scada-text font-sans antialiased overflow-x-hidden selection:bg-neon-cyan selection:text-scada-bg;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.03) 0px, transparent 50%);
+  }
+
+  /* Global light mode style overrides when html does not have class .dark */
+  html:not(.dark) body {
+    background-color: var(--scada-bg) !important;
+    color: var(--scada-text) !important;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.02) 0px, transparent 50%) !important;
+  }
+
+  html:not(.dark) .glass-panel,
+  html:not(.dark) .bg-scada-panel {
+    background-color: var(--scada-panel) !important;
+    border-color: var(--scada-border) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  }
+
+  html:not(.dark) .bg-scada-bg {
+    background-color: var(--scada-bg) !important;
+  }
+
+  html:not(.dark) .border-scada-border {
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) .bg-steel-900,
+  html:not(.dark) .bg-steel-800,
+  html:not(.dark) .bg-steel-700 {
+    background-color: var(--scada-bg) !important;
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) .text-white,
+  html:not(.dark) .text-slate-100 {
+    color: #0f172a !important;
+  }
+
+  html:not(.dark) .text-slate-200 {
+    color: #1e293b !important;
+  }
+
+  html:not(.dark) .text-slate-300 {
+    color: #334155 !important;
+  }
+
+  html:not(.dark) .text-scada-muted,
+  html:not(.dark) .text-slate-400 {
+    color: #475569 !important;
+  }
+
+  html:not(.dark) .border-scada-border\/60,
+  html:not(.dark) .border-scada-border\/70,
+  html:not(.dark) .border-scada-border\/80,
+  html:not(.dark) .border-scada-border\/50 {
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) .divide-scada-border\/30 > * + * {
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) .hover\:bg-steel-900\/10:hover {
+    background-color: rgba(148, 163, 184, 0.1) !important;
+  }
+
+  html:not(.dark) input,
+  html:not(.dark) select,
+  html:not(.dark) textarea {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) input::placeholder {
+    color: #64748b !important;
+  }
+
+  html:not(.dark) .bg-black\/60 {
+    background-color: #f1f5f9 !important;
+    border-color: var(--scada-border) !important;
+  }
+
+  html:not(.dark) .bg-black\/80 {
+    background-color: rgba(15, 23, 42, 0.5) !important;
+  }
+
+  /* Custom glass scrollbar for modern industrial looks */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-scada-bg border-l border-scada-border;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-steel-800 rounded-full border border-scada-border hover:bg-steel-700;
+  }
+}
+
+@layer components {
+  /* Premium Glassmorphic SCADA panels */
+  .glass-panel {
+    background-color: var(--scada-panel-glass);
+    border: 1px solid var(--scada-border-glass);
+    @apply backdrop-blur-md shadow-glass rounded-xl;
+  }
+
+  /* Digital neon safety signals */
+  .glow-cyan {
+    @apply shadow-neon-cyan border-neon-cyan/50;
+  }
+  
+  .glow-red {
+    @apply shadow-neon-red border-neon-crimson/50;
+  }
+
+  .glow-green {
+    @apply shadow-neon-green border-neon-emerald/50;
+  }
+
+  /* Scanline cathode CRT effect overlay for CCTV grids */
+  .cctv-scanline::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 10;
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+  }
+}
