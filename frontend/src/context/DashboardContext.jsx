@@ -195,66 +195,78 @@ export const DashboardProvider = ({ children }) => {
 
   // Real-Time WebSocket Connection to Django ASGI Channels
   useEffect(() => {
-    const wsUrl = `ws://${window.location.hostname}:8000/ws/live-stream/`;
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const wsHost = isLocalhost ? window.location.hostname : '127.0.0.1';
+    const wsUrl = `ws://${wsHost}:8000/ws/live-stream/`;
     let ws = null;
     let reconnectTimer = null;
 
     const connectWs = () => {
       console.log(`[WS] Attempting connection to ${wsUrl}`);
-      ws = new WebSocket(wsUrl);
+      try {
+        ws = new WebSocket(wsUrl);
 
-      ws.onopen = () => {
-        console.log("[WS] Connected to live camera stream socket");
-      };
+        ws.onopen = () => {
+          console.log("[WS] Connected to live camera stream socket");
+        };
 
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          // Expected payload structure: { camera_code: 'CCTV-BF-01', frame: 'data:image/jpeg;base64,...', detections: [...] }
-          if (data.camera_code) {
-            setLastFrameTime(prev => ({ ...prev, [data.camera_code]: Date.now() }));
-            
-            if (data.frame) {
-              setLiveCameraFrames(prev => ({ ...prev, [data.camera_code]: data.frame }));
-            }
-            
-            if (data.detections) {
-              setActiveGridOverlay(prev => ({ ...prev, [data.camera_code]: data.detections }));
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.camera_code) {
+              setLastFrameTime(prev => ({ ...prev, [data.camera_code]: Date.now() }));
               
-              // Refresh violation listings dynamically on infraction detections
-              const hasViol = data.detections.some(d => d.color === '#ef4444' || d.label.includes('Incompliant'));
-              if (hasViol) {
-                const token = localStorage.getItem('bsp_access_token');
-                if (token) {
-                  const now = Date.now();
-                  if (!window._lastViolFetch || now - window._lastViolFetch > 5000) {
-                    window._lastViolFetch = now;
-                    fetchData(token);
+              if (data.frame) {
+                setLiveCameraFrames(prev => ({ ...prev, [data.camera_code]: data.frame }));
+              }
+              
+              if (data.detections) {
+                setActiveGridOverlay(prev => ({ ...prev, [data.camera_code]: data.detections }));
+                
+                const hasViol = data.detections.some(d => d.color === '#ef4444' || d.label.includes('Incompliant'));
+                if (hasViol) {
+                  const token = localStorage.getItem('bsp_access_token');
+                  if (token) {
+                    const now = Date.now();
+                    if (!window._lastViolFetch || now - window._lastViolFetch > 5000) {
+                      window._lastViolFetch = now;
+                      fetchData(token);
+                    }
                   }
                 }
               }
             }
+          } catch (err) {
+            console.error("[WS] Error parsing WebSocket message:", err);
           }
-        } catch (err) {
-          console.error("[WS] Error parsing WebSocket message:", err);
-        }
-      };
+        };
 
-      ws.onclose = () => {
-        console.log("[WS] Stream socket closed. Reconnecting in 3s...");
-        reconnectTimer = setTimeout(connectWs, 3000);
-      };
+        ws.onclose = () => {
+          console.log("[WS] Stream socket closed. Reconnecting in 3s...");
+          reconnectTimer = setTimeout(connectWs, 3000);
+        };
 
-      ws.onerror = (err) => {
-        console.error("[WS] WebSocket error:", err);
-        ws.close();
-      };
+        ws.onerror = (err) => {
+          console.error("[WS] WebSocket error:", err);
+          try {
+            ws.close();
+          } catch (e) {}
+        };
+      } catch (err) {
+        console.error("[WS] Failed to connect WebSocket:", err);
+        // Fallback to reconnect even if constructor fails (e.g. security blocks)
+        reconnectTimer = setTimeout(connectWs, 5000);
+      }
     };
 
     connectWs();
 
     return () => {
-      if (ws) ws.close();
+      if (ws) {
+        try {
+          ws.close();
+        } catch (e) {}
+      }
       if (reconnectTimer) clearTimeout(reconnectTimer);
     };
   }, []);
