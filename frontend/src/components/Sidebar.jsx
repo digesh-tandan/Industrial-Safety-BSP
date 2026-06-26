@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDashboard } from '../context/DashboardContext';
+import sailLogo from '../assets/sail_logo.png';
 import { 
   BiSolidDashboard, BiVideoRecording, BiErrorCircle, 
   BiGroup, BiBarChartSquare, BiFile, BiLogOut, BiShieldQuarter
@@ -22,8 +23,8 @@ const Sidebar = ({ activePage, setActivePage }) => {
     <aside className="w-64 bg-scada-panel border-r border-scada-border/70 flex flex-col h-screen select-none z-30">
       {/* 1. Header BSP Identity */}
       <div className="p-5 border-b border-scada-border/50 flex items-center gap-3">
-        <div className="p-2 bg-neon-cyan/10 rounded-lg text-neon-cyan border border-neon-cyan/25 shadow-neon-cyan">
-          <BiShieldQuarter size={26} className="animate-pulse" />
+        <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center p-1.5 shadow-md">
+          <img src={sailLogo} alt="SAIL Logo" className="w-full h-full object-contain" />
         </div>
         <div>
           <h1 className="font-bold text-lg tracking-wide text-white font-sans">SAIL BSP</h1>

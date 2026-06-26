@@ -360,6 +360,10 @@ export const DashboardProvider = ({ children }) => {
             full_name: username === 'admin' ? 'System Administrator' : 'Safety Officer',
             role: username === 'admin' ? 1 : 2,
             role_name: username === 'admin' ? 'Admin' : 'Safety Officer',
+            employee_id: username === 'admin' ? 'BSP-ADM-001' : 'BSP-SFE-081',
+            designation: username === 'admin' ? 'System Administrator' : 'Senior Safety Officer',
+            department: username === 'admin' ? 'Information Technology' : 'Safety & Occupational Health',
+            phone: username === 'admin' ? '+91 94252 01001' : '+91 94252 08081',
             is_active: true
           };
           localStorage.setItem('bsp_access_token', 'fallback-access-token');

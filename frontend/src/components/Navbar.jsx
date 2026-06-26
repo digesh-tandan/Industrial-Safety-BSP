@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import { BiBell, BiSearch, BiChip, BiUser, BiSun, BiMoon } from 'react-icons/bi';
+import sailLogo from '../assets/sail_logo.png';
 
 const Navbar = () => {
-  const { user, violations, theme, toggleTheme } = useDashboard();
+  const { user, violations, theme, toggleTheme, logoutUser } = useDashboard();
   const [showNotif, setShowNotif] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Filter unresolved high-severity violations to display as alerts
   const pendingViolations = violations.filter(v => !v.is_resolved).slice(0, 4);
@@ -12,7 +14,8 @@ const Navbar = () => {
   return (
     <header className="h-16 bg-scada-panel border-b border-scada-border/70 flex items-center justify-between px-6 z-20">
       {/* 1. System title */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        <img src={sailLogo} alt="SAIL Logo" className="h-8 w-auto object-contain" />
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-100 font-sans hidden md:block">
           SAIL Bhilai Steel Plant <span className="text-neon-cyan">| Safety Command Center</span>
         </h2>
@@ -86,14 +89,65 @@ const Navbar = () => {
 
         {/* 4. Active Safety Officer User Profile Card */}
         {user && (
-          <div className="flex items-center gap-3 border-l border-scada-border/70 pl-6">
-            <div className="text-right hidden sm:block">
-              <h4 className="text-xs font-bold text-slate-100">{user.full_name}</h4>
-              <p className="text-[10px] text-neon-cyan font-semibold">{user.role_name}</p>
-            </div>
-            <div className="w-9 h-9 bg-steel-800 border border-neon-cyan/35 rounded-lg flex items-center justify-center text-neon-cyan shadow-neon-cyan/15">
-              <BiUser size={18} />
-            </div>
+          <div className="relative">
+            <button 
+              onClick={() => setShowProfile(!showProfile)}
+              className="flex items-center gap-3 border-l border-scada-border/70 pl-6 cursor-pointer focus:outline-none hover:opacity-90 group transition-all"
+            >
+              <div className="text-right hidden sm:block">
+                <h4 className="text-xs font-bold text-slate-100 group-hover:text-neon-cyan transition-colors">{user.full_name}</h4>
+                <p className="text-[10px] text-neon-cyan font-semibold">{user.role_name}</p>
+              </div>
+              <div className="w-9 h-9 bg-steel-800 border border-neon-cyan/35 rounded-lg flex items-center justify-center text-neon-cyan shadow-neon-cyan/15 group-hover:shadow-neon-cyan/30 transition-all">
+                <BiUser size={18} />
+              </div>
+            </button>
+
+            {showProfile && (
+              <div className="absolute right-0 mt-3 w-80 bg-scada-panel border border-scada-border/80 shadow-2xl rounded-xl z-50 overflow-hidden glass-panel text-xs text-slate-300">
+                <div className="p-4 bg-steel-800/80 border-b border-scada-border flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/35 flex items-center justify-center text-neon-cyan text-xl font-bold shadow-neon-cyan/10">
+                    {user.full_name ? user.full_name.charAt(0) : 'U'}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-sm">{user.full_name}</h4>
+                    <p className="text-[10px] text-scada-muted">@{user.username}</p>
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-3 bg-scada-panel/90">
+                  <div className="flex items-center justify-between py-1 border-b border-scada-border/30">
+                    <span className="text-scada-muted font-medium">Employee ID</span>
+                    <span className="font-bold text-white">{user.employee_id || (user.username === 'admin' ? 'BSP-ADM-001' : 'BSP-SFE-081')}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-scada-border/30">
+                    <span className="text-scada-muted font-medium">Designation</span>
+                    <span className="font-semibold text-white">{user.designation || (user.username === 'admin' ? 'System Administrator' : 'Senior Safety Officer')}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-scada-border/30">
+                    <span className="text-scada-muted font-medium">Department</span>
+                    <span className="font-semibold text-white">{user.department || (user.username === 'admin' ? 'Information Technology' : 'Safety & Occupational Health')}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-scada-border/30">
+                    <span className="text-scada-muted font-medium">Mobile No</span>
+                    <span className="font-semibold text-white">{user.phone || (user.username === 'admin' ? '+91 94252 01001' : '+91 94252 08081')}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1 border-b border-scada-border/30">
+                    <span className="text-scada-muted font-medium">Email</span>
+                    <span className="font-semibold text-white truncate max-w-[180px]">{user.email || (user.username === 'admin' ? 'admin@sail-bsp.in' : 'officer@sail-bsp.in')}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-steel-900/50 border-t border-scada-border/50 flex justify-end">
+                  <button 
+                    onClick={logoutUser}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-neon-crimson hover:bg-neon-crimson/10 rounded-lg transition-all"
+                  >
+                    Logout Session
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

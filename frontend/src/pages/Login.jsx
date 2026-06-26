@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import { BiShieldQuarter, BiLockAlt, BiUser } from 'react-icons/bi';
+import sailLogo from '../assets/sail_logo.png';
 
 const Login = () => {
   const { loginUser } = useDashboard();
@@ -30,8 +31,8 @@ const Login = () => {
 
       <div className="w-full max-w-md p-8 bg-[#101726]/90 backdrop-blur-md border border-[#1e293b] rounded-2xl shadow-2xl relative z-10 glass-panel">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-neon-cyan/10 border border-neon-cyan/35 rounded-2xl flex items-center justify-center text-neon-cyan mx-auto shadow-neon-cyan mb-4 animate-pulse">
-            <BiShieldQuarter size={36} />
+          <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center p-2.5 mx-auto shadow-lg mb-4">
+            <img src={sailLogo} alt="SAIL Logo" className="w-full h-full object-contain" />
           </div>
           <h2 className="text-xl font-bold uppercase tracking-wider text-white">SAIL Bhilai Steel Plant</h2>
           <p className="text-[10px] text-neon-cyan font-bold uppercase tracking-widest mt-1">AI Safety Control portal</p>
